@@ -15,5 +15,6 @@ class IdpView(discord.ui.View):
     @discord.ui.button(label="Get in Copy Format", style=discord.ButtonStyle.green)
     async def copy_format(self, interaction: discord.Interaction, button: discord.Button):
         await interaction.response.send_message(
-            "ID: {}\nPassword: {}\nMap: {}".format(self.room_id, self.password, self.map), ephemeral=True
+            f"ID: {self.room_id}\nPassword: {self.password}\nMap: {self.map}",
+            ephemeral=True,
         )

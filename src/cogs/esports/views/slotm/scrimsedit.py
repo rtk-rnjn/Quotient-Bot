@@ -68,7 +68,13 @@ class SlotmScrimsEditor(EsportsBaseView):
         if _view.custom_id:
             _q = "UPDATE slot_manager SET scrim_ids = $1 WHERE id = $2"
             await self.ctx.bot.db.execute(
-                _q, [_ for _ in self.record.scrim_ids if not str(_) in _view.custom_id], self.record.id
+                _q,
+                [
+                    _
+                    for _ in self.record.scrim_ids
+                    if str(_) not in _view.custom_id
+                ],
+                self.record.id,
             )
             await self.record.refresh_public_message()
             await self.ctx.success("Successfully removed selected scrims.", 3)

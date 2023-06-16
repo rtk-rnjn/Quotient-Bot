@@ -28,7 +28,7 @@ draw.text((1021, top), "WINS", fill, font=font)
 image.paste(rect, (40, 220), rect)
 
 top = 280
-for i in range(11):
+for _ in range(11):
     image.paste(rect, (40, top), rect)
     top += 50
 

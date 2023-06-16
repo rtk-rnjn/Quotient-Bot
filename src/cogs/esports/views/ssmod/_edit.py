@@ -52,7 +52,11 @@ class SSmodEditor(EsportsBaseView):
         await record.refresh_from_db()
         self.records[_index] = record
 
-        _e = discord.Embed(color=0x00FFB3, title=f"Screenshots Manager - Edit Config", url=config.SERVER_LINK)
+        _e = discord.Embed(
+            color=0x00FFB3,
+            title="Screenshots Manager - Edit Config",
+            url=config.SERVER_LINK,
+        )
 
         fields = {
             "Channel": getattr(record.channel, "mention", "`deleted-channel`"),

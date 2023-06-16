@@ -22,7 +22,7 @@ class ScrimsToggle(ScrimsView):
     @property
     async def initial_message(self):
         _e = discord.Embed(color=self.bot.color)
-        _e.description = "**Start / Stop scrim registration of {}**".format(self.record)
+        _e.description = f"**Start / Stop scrim registration of {self.record}**"
         _e.set_author(name=f"Page - {' / '.join(await self.record.scrim_posi())}", icon_url=self.bot.user.avatar.url)
         return _e
 

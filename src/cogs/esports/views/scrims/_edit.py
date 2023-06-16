@@ -57,30 +57,44 @@ class ScrimsEditor(ScrimsView):
 
         fields = {
             "Name": "`{0}`".format(scrim.name),
-            "Registration Channel": getattr(scrim.registration_channel, "mention", "`channel-deleted`"),
-            "Slotlist Channel": getattr(scrim.slotlist_channel, "mention", "`deleted-channel`"),
+            "Registration Channel": getattr(
+                scrim.registration_channel, "mention", "`channel-deleted`"
+            ),
+            "Slotlist Channel": getattr(
+                scrim.slotlist_channel, "mention", "`deleted-channel`"
+            ),
             "Success Role": getattr(scrim.role, "mention", "`role-deleted`"),
             "Mentions": f"`{scrim.required_mentions}`",
             "Slots": f"`{scrim.total_slots}`",
-            "Open Time": f"{dt(scrim.open_time,'t')} ({dt(scrim.open_time)})",
+            "Open Time": f"{dt(scrim.open_time, 't')} ({dt(scrim.open_time)})",
             f"Reactions {self.bot.config.PRIME_EMOJI}": f"{scrim.check_emoji},{scrim.cross_emoji}",
             "Ping Role": getattr(scrim.ping_role, "mention", "`Not-Set`"),
             "Open Role": getattr(scrim.open_role, "mention", "`role-deleted`"),
             "Multi-Register": ("`Not allowed!`", "`Allowed`")[scrim.multiregister],
             "Team Compulsion": ("`No!`", "`Yes!`")[scrim.teamname_compulsion],
-            "Duplicate Team Name": ("`Allowed`", "`Not allowed!`")[scrim.no_duplicate_name],
+            "Duplicate Team Name": ("`Allowed`", "`Not allowed!`")[
+                scrim.no_duplicate_name
+            ],
             "Autodelete Rejected": ("`No!`", "`Yes!`")[scrim.autodelete_rejects],
-            "Autodelete Late Messages": ("`No!`", "`Yes!`")[scrim.autodelete_extras],
-            "Slotlist Start from": "`{}`".format(scrim.start_from),
+            "Autodelete Late Messages": ("`No!`", "`Yes!`")[
+                scrim.autodelete_extras
+            ],
+            "Slotlist Start from": f"`{scrim.start_from}`",
             "Autoclean": f"{dt(scrim.autoclean_time,'t')} (`{', '.join(_.name.title() for _ in scrim.autoclean)}`)"
             if scrim.autoclean_time
             else "`Turned OFF`",
-            "Scrim Days": ", ".join(map(lambda x: "`{0}`".format(x.name.title()[:2]), self.record.open_days))
+            "Scrim Days": ", ".join(
+                map(
+                    lambda x: "`{0}`".format(x.name.title()[:2]),
+                    self.record.open_days,
+                )
+            )
             if self.record.open_days
             else "`Not set`",
-            f"Required Lines {self.bot.config.PRIME_EMOJI}": ("`Not set`", "`{0}`".format(scrim.required_lines))[
-                bool(scrim.required_lines)
-            ],
+            f"Required Lines {self.bot.config.PRIME_EMOJI}": (
+                "`Not set`",
+                "`{0}`".format(scrim.required_lines),
+            )[bool(scrim.required_lines)],
         }
 
         for idx, (name, value) in enumerate(fields.items()):

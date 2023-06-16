@@ -52,8 +52,8 @@ class PremiumTxn(BaseDbModel):
     async def gen_txnid() -> str:
         txnid = None
 
-        while txnid == None:
-            _id = "QP_" + os.urandom(16).hex()
+        while txnid is None:
+            _id = f"QP_{os.urandom(16).hex()}"
             if not await PremiumTxn.filter(txnid=_id).exists():
                 txnid = _id
 

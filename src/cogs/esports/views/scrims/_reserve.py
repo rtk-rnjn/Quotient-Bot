@@ -38,7 +38,7 @@ class ScrimsSlotReserve(ScrimsView):
                 ),
                 "❌",
             )
-            _l.append(f"Slot {_:02}  -->  " + team_name + "\n")
+            _l.append(f"Slot {_:02}  -->  {team_name}" + "\n")
 
         _e.description += f"```{''.join(_l)}```"
 
@@ -165,16 +165,15 @@ class SlotSelect(discord.ui.Select):
     view: ScrimsView
 
     def __init__(self, slots: T.List[ReservedSlot]):
-        _options = []
-        for _ in slots:
-            _options.append(
-                discord.SelectOption(
-                    label=f"Slot {_.num}",
-                    description=f"Team: {_.team_name} ({_.leader or 'No leader'})",
-                    value=_.id.__str__(),
-                    emoji=emote.TextChannel,
-                )
+        _options = [
+            discord.SelectOption(
+                label=f"Slot {_.num}",
+                description=f"Team: {_.team_name} ({_.leader or 'No leader'})",
+                value=_.id.__str__(),
+                emoji=emote.TextChannel,
             )
+            for _ in slots
+        ]
         super().__init__(
             max_values=len(slots), placeholder="Select the slot(s) you want to remove from reserved", options=_options
         )

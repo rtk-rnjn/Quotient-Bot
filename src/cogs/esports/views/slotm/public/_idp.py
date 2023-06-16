@@ -107,16 +107,14 @@ class UserSelector(discord.ui.Select):
     view: BaseSelector
 
     def __init__(self, users: T.List[discord.Member]):
-        _options = []
-        for user in users:
-            _options.append(
-                discord.SelectOption(
-                    label=f"{user.name}#{user.discriminator}",
-                    value=user.id,
-                    emoji="📇",
-                )
+        _options = [
+            discord.SelectOption(
+                label=f"{user.name}#{user.discriminator}",
+                value=user.id,
+                emoji="📇",
             )
-
+            for user in users
+        ]
         super().__init__(placeholder="Select your teammate from this dropdown", options=_options)
 
     async def callback(self, interaction: discord.Interaction):

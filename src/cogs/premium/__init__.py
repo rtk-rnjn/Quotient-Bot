@@ -120,7 +120,7 @@ class PremiumCog(Cog, name="Premium"):
         if not _g:
             return
 
-        if not _g.premium_end_time == timer.expires:
+        if _g.premium_end_time != timer.expires:
             return
 
         _perks = "\n".join(await extra_guild_perks(guild_id))
@@ -158,7 +158,7 @@ class PremiumCog(Cog, name="Premium"):
         user_id = timer.kwargs["user_id"]
         _user = await User.get(pk=user_id)
 
-        if not _user.premium_expire_time == timer.expires:
+        if _user.premium_expire_time != timer.expires:
             return
 
         _q = "UPDATE user_data SET is_premium = FALSE ,premiums=0 ,made_premium = '{}' WHERE user_id = $1"
@@ -205,10 +205,8 @@ class PremiumCog(Cog, name="Premium"):
 
         _view = discord.ui.View(timeout=None)
 
-        try:
+        with suppress(discord.HTTPException):
             await member.send(embed=_e, view=_view)
-        except discord.HTTPException:
-            pass
 
 
 async def setup(bot: Quotient) -> None:

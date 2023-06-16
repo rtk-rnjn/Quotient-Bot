@@ -81,13 +81,10 @@ class QuoPaginator:
         return e
 
     async def start(self):
-        _pages = []
-        for page in get_chunks(self.lines, self.per_page):
-            _pages.append("".join(page))
-
+        _pages = ["".join(page) for page in get_chunks(self.lines, self.per_page)]
         self.pages = Pages(_pages)
 
-        if not self.pages.total > 1:
+        if self.pages.total <= 1:
             return await self.ctx.send(embed=self.embed)
 
         view = PaginatorView(

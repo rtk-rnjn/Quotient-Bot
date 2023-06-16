@@ -61,4 +61,4 @@ class LockEvents(Cog):
             await Lockdown.filter(guild_id=guild_id, type=LockType.guild).delete()
             channel = self.bot.get_channel(check.channel_id)
             if channel is not None and channel.permissions_for(channel.guild.me).send_messages:
-                await channel.send(f"Unlocked **server**.")
+                await channel.send("Unlocked **server**.")

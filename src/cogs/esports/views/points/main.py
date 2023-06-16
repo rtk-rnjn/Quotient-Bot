@@ -149,10 +149,12 @@ class TeamSelector(discord.ui.Select):
     view: QuotientView
 
     def __init__(self, teams: T.List[Team]):
-        _options = []
-        for _ in teams:
-            _options.append(discord.SelectOption(label=_.name, value=str(_.id), emoji=emote.TextChannel))
-
+        _options = [
+            discord.SelectOption(
+                label=_.name, value=str(_.id), emoji=emote.TextChannel
+            )
+            for _ in teams
+        ]
         super().__init__(placeholder="Select the teams you want to remove...", max_values=len(teams), options=_options)
 
     async def callback(self, interaction: discord.Interaction):

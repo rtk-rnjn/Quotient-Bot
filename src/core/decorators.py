@@ -21,12 +21,7 @@ class right_bot_check:
             if TYPE_CHECKING:
                 from .Bot import Quotient
 
-            if isinstance(args[0], Cog):
-                bot: Quotient = args[0].bot
-
-            else:
-                bot: Quotient = args[0]  # type: ignore
-
+            bot: Quotient = args[0].bot if isinstance(args[0], Cog) else args[0]
             with suppress(AttributeError):
                 for arg in args:
                     # check for both guild and guild_id
@@ -75,14 +70,19 @@ class role_command_check:
             ctx: Context  # type: ignore
 
             if role.managed:
-                return await ctx.error(f"Role is an integrated role and cannot be added manually.")
+                return await ctx.error(
+                    "Role is an integrated role and cannot be added manually."
+                )
 
             if ctx.me.top_role.position <= role.position:
                 return await ctx.error(
                     f"The position of {role.mention} is above my toprole ({ctx.me.top_role.mention})"
                 )
 
-            if not ctx.author == ctx.guild.owner and ctx.author.top_role.position <= role.position:
+            if (
+                ctx.author != ctx.guild.owner
+                and ctx.author.top_role.position <= role.position
+            ):
                 return await ctx.error(
                     f"The position of {role.mention} is above your top role ({ctx.author.top_role.mention})"
                 )

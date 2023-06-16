@@ -34,7 +34,10 @@ class QuotientView(discord.ui.View):
     async def on_timeout(self) -> None:
         if hasattr(self, "message"):
             for b in self.children:
-                if isinstance(b, discord.ui.Button) and not b.style == discord.ButtonStyle.link:
+                if (
+                    isinstance(b, discord.ui.Button)
+                    and b.style != discord.ButtonStyle.link
+                ):
                     b.style, b.disabled = discord.ButtonStyle.grey, True
 
                 elif isinstance(b, discord.ui.Select):

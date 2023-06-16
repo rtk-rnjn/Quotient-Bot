@@ -46,7 +46,7 @@ class ScrimsSlotmEditor(EsportsBaseView):
                 name=f"{ri(ascii_uppercase[idx])} {name}:",
                 value=value,
             )
-        _e.add_field(name=f"🟥 Delete Slot-M", value=f"`Click to delete`")
+        _e.add_field(name="🟥 Delete Slot-M", value="`Click to delete`")
         return _e
 
     async def __update_record(self, **kwargs):

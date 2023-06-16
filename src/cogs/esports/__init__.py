@@ -37,7 +37,9 @@ class ScrimManager(Cog, name="Esports"):
             if not scrim or not scrim.opened_at:  # either scrim doesn't exist or it is closed.
                 return
 
-            if not message.id in (record.message_id for record in await scrim.assigned_slots.all()):
+            if message.id not in (
+                record.message_id for record in await scrim.assigned_slots.all()
+            ):
                 return
 
             slot = [
@@ -62,7 +64,9 @@ class ScrimManager(Cog, name="Esports"):
         Contains commands related to Quotient's powerful scrims manager.
         """
         if not any((ctx.author.guild_permissions.manage_guild, Scrim.is_ignorable(ctx.author))):
-            return await ctx.error(f"You need `scrims-mod` role or `Manage-Server` permissions to use this command.")
+            return await ctx.error(
+                "You need `scrims-mod` role or `Manage-Server` permissions to use this command."
+            )
 
         v = ScrimsMain(ctx)
         v.message = await ctx.send(embed=await v.initial_embed(), view=v)
@@ -108,7 +112,7 @@ class ScrimManager(Cog, name="Esports"):
         _e.add_field(name="Room ID", value=room_id)
         _e.add_field(name="Password", value=password)
         _e.add_field(name="Map", value=map)
-        _e.set_footer(text=f"Auto-delete time")
+        _e.set_footer(text="Auto-delete time")
         _e.timestamp = self.bot.current_time + timedelta(minutes=30)
 
         view = IdpView(room_id, password, map)
@@ -141,7 +145,7 @@ class ScrimManager(Cog, name="Esports"):
             )
 
         if channel.id in self.bot.cache.eztagchannels:
-            return await ctx.error(f"This channel is already a easy tag channel.")
+            return await ctx.error("This channel is already a easy tag channel.")
 
         if (
             not channel.permissions_for(ctx.me).send_messages
@@ -181,8 +185,8 @@ class ScrimManager(Cog, name="Esports"):
     @commands.cooldown(1, 10, type=commands.BucketType.guild)
     async def remove_eztag(self, ctx: Context, *, channel: QuoTextChannel):
         """Remove a eztag channel"""
-        if not channel.id in self.bot.cache.eztagchannels:
-            return await ctx.error(f"This is not a EasyTag channel.")
+        if channel.id not in self.bot.cache.eztagchannels:
+            return await ctx.error("This is not a EasyTag channel.")
 
         await EasyTag.filter(channel_id=channel.id).delete()
         self.bot.cache.eztagchannels.discard(channel.id)
@@ -218,7 +222,7 @@ class ScrimManager(Cog, name="Esports"):
         """Enable/Disable autodelete for eztag."""
         record = await EasyTag.get_or_none(channel_id=channel.id)
         if not record:
-            return await ctx.error(f"This is not a EasyTag Channel.")
+            return await ctx.error("This is not a EasyTag Channel.")
 
         await EasyTag.filter(channel_id=channel.id).update(delete_after=not record.delete_after)
         await ctx.success(
@@ -258,7 +262,7 @@ class ScrimManager(Cog, name="Esports"):
             )
 
         if channel.id in self.bot.cache.tagcheck:
-            return await ctx.error(f"This channel is already a tagcheck channel.")
+            return await ctx.error("This channel is already a tagcheck channel.")
 
         if (
             not channel.permissions_for(ctx.me).send_messages
@@ -311,8 +315,8 @@ class ScrimManager(Cog, name="Esports"):
     @commands.cooldown(1, 10, type=commands.BucketType.guild)
     async def tagcheck_remove(self, ctx: Context, *, channel: QuoTextChannel):
         """Remove a channel from tagcheck"""
-        if not channel.id in self.bot.cache.tagcheck:
-            return await ctx.error(f"This is not a TagCheck channel.")
+        if channel.id not in self.bot.cache.tagcheck:
+            return await ctx.error("This is not a TagCheck channel.")
 
         await TagCheck.filter(channel_id=channel.id).delete()
         self.bot.cache.tagcheck.discard(channel.id)
@@ -325,7 +329,7 @@ class ScrimManager(Cog, name="Esports"):
         """Enable/Disable autodelete wrong tagchecks."""
         record = await TagCheck.get_or_none(channel_id=channel.id)
         if not record:
-            return await ctx.error(f"This is not a TagCheck Channel.")
+            return await ctx.error("This is not a TagCheck Channel.")
 
         await TagCheck.filter(channel_id=channel.id).update(delete_after=not record.delete_after)
         await ctx.success(
@@ -386,7 +390,10 @@ class ScrimManager(Cog, name="Esports"):
         Setup/Edit ssverification in your server
         """
         if not await ctx.is_premium_guild():
-            if not ctx.guild.member_count > 100 and not ctx.guild.id == 779229001986080779:
+            if (
+                ctx.guild.member_count <= 100
+                and ctx.guild.id != 779229001986080779
+            ):
                 return await ctx.error("Your server must have atleast 100 members to setup ssverification.")
 
         _view = SsmodMainView(ctx)

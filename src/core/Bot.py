@@ -175,8 +175,7 @@ class Quotient(commands.AutoShardedBot):
             return commands.when_mentioned_or("q")(self, message)
 
         prefix = None
-        guild = self.cache.guild_data.get(message.guild.id)
-        if guild:
+        if guild := self.cache.guild_data.get(message.guild.id):
             prefix = guild.get("prefix")
 
         else:
@@ -252,14 +251,10 @@ class Quotient(commands.AutoShardedBot):
         if embed_footer.strip().lower() == "none":
             embed_footer = None
 
-        embed = discord.Embed(**kwargs, color=embed_color).set_footer(text=embed_footer)
-        return embed
+        return discord.Embed(**kwargs, color=embed_color).set_footer(text=embed_footer)
 
     async def is_owner(self, user: Union[discord.Member, discord.User]) -> bool:
-        if await super().is_owner(user):
-            return True
-
-        return user.id in cfg.DEVS
+        return True if await super().is_owner(user) else user.id in cfg.DEVS
 
     async def get_or_fetch_member(self, guild: discord.Guild, member_id: int) -> Optional[discord.Member]:
         """Looks up a member in cache or fetches if not found."""
@@ -279,10 +274,7 @@ class Quotient(commands.AutoShardedBot):
 
         members = await guild.query_members(limit=1, user_ids=[member_id], cache=True)
 
-        if len(members) > 0:
-            return members[0]
-
-        return None
+        return members[0] if len(members) > 0 else None
 
     async def resolve_member_ids(
         self, guild: discord.Guild, member_ids: Iterable[int]

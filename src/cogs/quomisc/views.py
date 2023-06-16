@@ -37,7 +37,10 @@ class BaseView(discord.ui.View):
     async def on_timeout(self) -> None:
         if hasattr(self, "message"):
             for b in self.children:
-                if isinstance(b, discord.ui.Button) and not b.style == discord.ButtonStyle.link:
+                if (
+                    isinstance(b, discord.ui.Button)
+                    and b.style != discord.ButtonStyle.link
+                ):
                     b.style, b.disabled = discord.ButtonStyle.grey, True
 
             with suppress(discord.HTTPException):
@@ -75,7 +78,7 @@ class MoneyButton(BaseView):
         await self.message.edit(view=self)
 
         _u = await User.get(pk=self.ctx.author.id)
-        if not _u.money >= 120:
+        if _u.money < 120:
             return await interaction.followup.send(
                 f"{emote.error} Insufficient Quo Coins in your account.", ephemeral=True
             )

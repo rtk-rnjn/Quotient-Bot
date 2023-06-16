@@ -242,7 +242,9 @@ class Mod(Cog):
     async def role_humans(self, ctx: Context, role: discord.Role):
         """Add a role to all human users."""
 
-        members = [m for m in ctx.guild.members if all([not role in m.roles, not m.bot])]
+        members = [
+            m for m in ctx.guild.members if all([role not in m.roles, not m.bot])
+        ]
 
         prompt = await ctx.prompt(
             title="Are you sure you want to continue?",
@@ -278,7 +280,7 @@ class Mod(Cog):
     @role_command_check()
     async def role_bots(self, ctx: Context, role: discord.Role):
         """Add a role to all bot users."""
-        members = [m for m in ctx.guild.members if all([not role in m.roles, m.bot])]
+        members = [m for m in ctx.guild.members if all([role not in m.roles, m.bot])]
 
         prompt = await ctx.prompt(
             title="Are you sure you want to continue?",
@@ -315,7 +317,7 @@ class Mod(Cog):
     async def role_all(self, ctx: Context, role: discord.Role):
         """Add a role to everyone on the server"""
 
-        members = [m for m in ctx.guild.members if not role in m.roles]
+        members = [m for m in ctx.guild.members if role not in m.roles]
 
         prompt = await ctx.prompt(
             title="Are you sure you want to continue?",
@@ -526,29 +528,36 @@ class Mod(Cog):
     async def lock_server(self, ctx, duration: Optional[FutureTime]):
         check = await Lockdown.filter(guild_id=ctx.guild.id, type=LockType.guild).first()
         if check is not None:
-            text = f"Server is already locked."
+            text = "Server is already locked."
             if check.expire_time:
                 text += f"\n\nTime Remaining: {human_timedelta(check.expire_time)}"
             return await ctx.error(text)
 
         channels = list(filter(lambda x: x.overwrites_for(ctx.guild.default_role).send_messages, ctx.guild.channels))
-        mine = sum(1 for i in filter(lambda x: x.permissions_for(ctx.me).manage_channels, (channels)))
+        mine = sum(
+            1
+            for _ in filter(
+                lambda x: x.permissions_for(ctx.me).manage_channels, (channels)
+            )
+        )
         # len list would use additional memory so : )
 
         if not (channels):
-            return await ctx.error(f"@everyone doesn't have `send_messages` enabled in any channel.")
+            return await ctx.error(
+                "@everyone doesn't have `send_messages` enabled in any channel."
+            )
 
         if not mine:
             return await ctx.error(
-                f"`{sum(1 for i in channels)} channels` have send messages enabled. But unfortunately I don't permission to edit any of them."
+                f"`{len(channels)} channels` have send messages enabled. But unfortunately I don't permission to edit any of them."
             )
 
         prompt = await ctx.prompt(
-            f"`{sum(1 for i in channels)} channels` have send messages enabled for @everyone,\nI have permissions to modify `{mine} channels`.",
+            f"`{len(channels)} channels` have send messages enabled for @everyone,\nI have permissions to modify `{mine} channels`.",
             title="Do you want me to continue?",
         )
         if not prompt:
-            return await ctx.success(f"Alright, aborting.")
+            return await ctx.success("Alright, aborting.")
 
         await ctx.send(f"Kindly wait.. {emote.loading}", delete_after=3)
 
@@ -608,7 +617,7 @@ class Mod(Cog):
     async def unlock_guild(self, ctx):
         check = await Lockdown.get_or_none(guild_id=ctx.guild.id, type=LockType.guild).first()
         if not check:
-            return await ctx.error(f"The server is not locked.")
+            return await ctx.error("The server is not locked.")
 
         success = 0
         for channel in check.channels:
@@ -621,7 +630,7 @@ class Mod(Cog):
                 success += 1
 
         await ctx.success(
-            f"Successfully unlocked `{success}` channels. (`{sum(1 for i in check.channels)}` were locked.)"
+            f"Successfully unlocked `{success}` channels. (`{sum(1 for _ in check.channels)}` were locked.)"
         )
         await Lockdown.filter(guild_id=ctx.guild.id, type=LockType.guild).delete()
 
@@ -645,7 +654,12 @@ class Mod(Cog):
             return await ctx.error(f"The server is already under maintenance for **{role}**")
 
         channels = list(filter(lambda x: x.overwrites_for(role).read_messages, ctx.guild.channels))
-        mine = sum(1 for i in filter(lambda x: x.permissions_for(ctx.me).manage_channels, (channels)))
+        mine = sum(
+            1
+            for _ in filter(
+                lambda x: x.permissions_for(ctx.me).manage_channels, (channels)
+            )
+        )
         # len list would use additional memory so : )
 
         if not (channels):
@@ -653,15 +667,15 @@ class Mod(Cog):
 
         if not mine:
             return await ctx.error(
-                f"`{sum(1 for i in channels)} channels` have read messages enabled. But unfortunately I don't permission to edit any of them."
+                f"`{len(channels)} channels` have read messages enabled. But unfortunately I don't permission to edit any of them."
             )
 
         prompt = await ctx.prompt(
-            f"`{sum(1 for i in channels)} channels` have read messages enabled for **{role}**,\nI have permissions to modify `{mine} channels`.",
+            f"`{len(channels)} channels` have read messages enabled for **{role}**,\nI have permissions to modify `{mine} channels`.",
             title="Do you want me to continue?",
         )
         if not prompt:
-            return await ctx.success(f"Alright, aborting.")
+            return await ctx.success("Alright, aborting.")
 
         await ctx.send(f"Kindly wait.. {emote.loading}", delete_after=3)
 
@@ -689,7 +703,7 @@ class Mod(Cog):
                 channel_ids=success,
             )
 
-        prompt = await ctx.prompt(f"Do you want me to make maintenance channels?")
+        prompt = await ctx.prompt("Do you want me to make maintenance channels?")
 
         if prompt:
             overwrites = {
@@ -700,10 +714,10 @@ class Mod(Cog):
             }
             await ctx.guild.create_text_channel("maintenance-chat", overwrites=overwrites, reason=reason)
             await ctx.guild.create_voice_channel("maintenance-vc", overwrites=overwrites, reason=reason)
-            await ctx.success(f"Done")
+            await ctx.success("Done")
 
         else:
-            await ctx.success(f"Ok! Aborting")
+            await ctx.success("Ok! Aborting")
 
     @maintenance.command(name="off")
     @commands.bot_has_guild_permissions(manage_channels=True)
@@ -728,7 +742,7 @@ class Mod(Cog):
                 success += 1
 
         await ctx.success(
-            f"Successfully changed settings for `{success}` channels. (`{sum(1 for i in check.channels)}` were hidden.)"
+            f"Successfully changed settings for `{success}` channels. (`{sum(1 for _ in check.channels)}` were hidden.)"
         )
 
         await Lockdown.filter(type=LockType.maintenance, guild_id=ctx.guild.id, role_id=role.id).delete()
@@ -737,13 +751,15 @@ class Mod(Cog):
         vc = discord.utils.get(ctx.guild.channels, name="maintenance-vc")
 
         if tc and vc:
-            prompt = await ctx.prompt(message=f"Do you want me to delete maintenance channels?")
+            prompt = await ctx.prompt(
+                message="Do you want me to delete maintenance channels?"
+            )
             if prompt:
                 await tc.delete()
                 await vc.delete()
-                await ctx.success(f"Success")
+                await ctx.success("Success")
             else:
-                await ctx.success(f"OK!")
+                await ctx.success("OK!")
 
 
 async def setup(bot: Quotient) -> None:

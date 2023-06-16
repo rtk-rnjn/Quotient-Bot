@@ -14,21 +14,25 @@ from utils import truncate_string as ts
 class ScrimSlotSelector(discord.ui.Select):
     def __init__(self, slots: List[AssignedSlot], *, placeholder: str, multiple=False):
 
-        _options = []
-        for slot in slots:
-
-            _options.append(
-                discord.SelectOption(
-                    label=f"Slot {slot.num}", description=ts(slot.team_name, 22), emoji=emote.TextChannel, value=slot.id
-                )
+        _options = [
+            discord.SelectOption(
+                label=f"Slot {slot.num}",
+                description=ts(slot.team_name, 22),
+                emoji=emote.TextChannel,
+                value=slot.id,
             )
-
+            for slot in slots
+        ]
         super().__init__(options=_options, placeholder=placeholder, max_values=len(_options) if multiple else 1)
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         self.view.stop()
-        self.view.custom_id = interaction.data["values"][0] if not self.max_values > 1 else interaction.data["values"]
+        self.view.custom_id = (
+            interaction.data["values"][0]
+            if self.max_values <= 1
+            else interaction.data["values"]
+        )
 
 
 async def prompt_slot_selection(slots: List[AssignedSlot], placeholder: str, multiple: bool = False):

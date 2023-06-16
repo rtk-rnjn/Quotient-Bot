@@ -101,9 +101,11 @@ class Dev(Cog):
         embed = self.bot.embed(ctx, title=f"Command Usage ({total_uses})")
         embed.description = f"```{table}```"
 
-        cmds = sum(1 for i in self.bot.walk_commands())
+        cmds = sum(1 for _ in self.bot.walk_commands())
 
-        embed.set_footer(text="Total Commands: {}  | Invoke rate per minute: {}".format(cmds, round(get_ipm(ctx.bot), 2)))
+        embed.set_footer(
+            text=f"Total Commands: {cmds}  | Invoke rate per minute: {round(get_ipm(ctx.bot), 2)}"
+        )
 
         await ctx.send(embed=embed)
 

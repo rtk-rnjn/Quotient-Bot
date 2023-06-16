@@ -138,7 +138,7 @@ class Quomisc(Cog, name="quomisc"):
     @staticmethod
     def format_commit(commit):  # source: R danny
         short, _, _ = commit.message.partition("\n")
-        short_sha2 = commit.hex[0:6]
+        short_sha2 = commit.hex[:6]
         commit_tz = timezone(timedelta(minutes=commit.commit_time_offset))
         commit_time = datetime.fromtimestamp(commit.commit_time).astimezone(commit_tz)
 
@@ -220,7 +220,7 @@ class Quomisc(Cog, name="quomisc"):
             await ctx.success(f"Turned vote-reminder {'ON' if not check.reminder else 'OFF'}!")
         else:
             await Votes.create(user_id=ctx.author.id, reminder=True)
-            await ctx.success(f"Turned vote-reminder ON!")
+            await ctx.success("Turned vote-reminder ON!")
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
@@ -232,7 +232,7 @@ class Quomisc(Cog, name="quomisc"):
             return await ctx.simple(f"Prefix for this server is `{prefix}`")
 
         if len(new_prefix) > 5:
-            return await ctx.error(f"Prefix cannot contain more than 5 characters.")
+            return await ctx.error("Prefix cannot contain more than 5 characters.")
 
         self.bot.cache.guild_data[ctx.guild.id]["prefix"] = new_prefix
         await Guild.filter(guild_id=ctx.guild.id).update(prefix=new_prefix)
@@ -247,7 +247,7 @@ class Quomisc(Cog, name="quomisc"):
 
         self.bot.cache.guild_data[ctx.guild.id]["color"] = color
         await Guild.filter(guild_id=ctx.guild.id).update(embed_color=color)
-        await ctx.success(f"Updated server color.")
+        await ctx.success("Updated server color.")
 
     @commands.command()
     @checks.is_premium_guild()
@@ -255,11 +255,11 @@ class Quomisc(Cog, name="quomisc"):
     async def footer(self, ctx: Context, *, new_footer: str):
         """Change footer of embeds sent by Quotient"""
         if len(new_footer) > 50:
-            return await ctx.success(f"Footer cannot contain more than 50 characters.")
+            return await ctx.success("Footer cannot contain more than 50 characters.")
 
         self.bot.cache.guild_data[ctx.guild.id]["footer"] = new_footer
         await Guild.filter(guild_id=ctx.guild.id).update(embed_footer=new_footer)
-        await ctx.send(f"Updated server footer.")
+        await ctx.send("Updated server footer.")
 
     @commands.command()
     async def money(self, ctx: Context):
@@ -274,9 +274,12 @@ class Quomisc(Cog, name="quomisc"):
         )
 
         _view = MoneyButton(ctx)
-        if not user.money >= 120:
+        if user.money < 120:
             _view.children[0] = discord.ui.Button(
-                label=f"Claim Prime (120 coins)", custom_id="claim_prime", style=discord.ButtonStyle.grey, disabled=True
+                label="Claim Prime (120 coins)",
+                custom_id="claim_prime",
+                style=discord.ButtonStyle.grey,
+                disabled=True,
             )
 
         _view.message = await ctx.send(embed=e, embed_perms=True, view=_view)

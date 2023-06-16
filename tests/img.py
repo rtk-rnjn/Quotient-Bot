@@ -38,7 +38,7 @@ def add_rectangles(image, rect):
     rect = rect.resize((round(rect.size[0] / 2.8), round(rect.size[1] / 2.8)))
 
     image.paste(rect, (40, 260), rect)
-    for i in range(10):
+    for _ in range(10):
         image.paste(rect, (40, top), rect)
         top += 50
 

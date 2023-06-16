@@ -70,7 +70,7 @@ class GroupPages(EsportsBaseView):
             _e.add_field(name="Send to", value=getattr(self.send_channel, "mention", "`Not-Set`"))
 
         _e.add_field(name="Ping @everyone", value=("`No`", "`Yes`")[self.ping_all])
-        _e.set_footer(text="Page {}/{}".format(current_page, len(self.records)))
+        _e.set_footer(text=f"Page {current_page}/{len(self.records)}")
         return _e
 
     @discord.ui.button(emoji="<:left:878668491660623872>")
@@ -78,11 +78,7 @@ class GroupPages(EsportsBaseView):
         await interaction.response.defer()
 
         index = self.records.index(self.record)
-        if index == 0:
-            self.record = self.records[-1]
-        else:
-            self.record = self.records[index - 1]
-
+        self.record = self.records[-1] if index == 0 else self.records[index - 1]
         await self.refresh_view()
 
     @discord.ui.button(label="Skip to...")
@@ -127,7 +123,7 @@ class GroupPages(EsportsBaseView):
 
         for slot in self.record:
             member = await self.bot.get_or_fetch_member(self.ctx.guild, slot.leader_id)
-            if member and not role in member.roles:
+            if member and role not in member.roles:
                 try:
                     await member.add_roles(role)
                 except Exception as e:

@@ -22,15 +22,23 @@ class QGuild(BaseModel):
             "id": str(guild.id),
             "name": guild.name,
             "dashboard_access": perms,
-            "icon": getattr(guild.icon, "url", "https://cdn.discordapp.com/embed/avatars/0.png"),
+            "icon": getattr(
+                guild.icon, "url", "https://cdn.discordapp.com/embed/avatars/0.png"
+            ),
+            "channels": [
+                {"id": str(c.id), "name": c.name} for c in guild.text_channels
+            ],
+            "roles": [
+                {
+                    "id": str(r.id),
+                    "name": r.name,
+                    "color": int(r.color),
+                    "managed": r.managed,
+                }
+                for r in guild.roles
+            ],
+            "boosted_by": {},
         }
-
-        _d["channels"] = [{"id": str(c.id), "name": c.name} for c in guild.text_channels]
-
-        _d["roles"] = [
-            {"id": str(r.id), "name": r.name, "color": int(r.color), "managed": r.managed} for r in guild.roles
-        ]
-        _d["boosted_by"] = {}
 
         record = await Guild.get(pk=guild.id)
 

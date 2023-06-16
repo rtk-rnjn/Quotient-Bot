@@ -106,9 +106,7 @@ class SSVerify(BaseDbModel):
     @property
     def filtered_keywords(self):
         _l = [self.channel_name.lower().replace(" ", "")]
-        for _ in self.keywords:
-            _l.append(_.lower().replace(" ", ""))
-
+        _l.extend(_.lower().replace(" ", "") for _ in self.keywords)
         return _l
 
     async def _add_to_data(self, ctx: Context, img: ImageResponse):
@@ -140,10 +138,10 @@ class SSVerify(BaseDbModel):
         return False, False
 
     async def verify_yt(self, ctx: Context, image: ImageResponse):
-        if not any(_ in image.lower_text for _ in ("subscribe", "videos")):
+        if all(_ not in image.lower_text for _ in ("subscribe", "videos")):
             return f"{self.emoji()} | This is not a valid youtube ss.\n"
 
-        elif not self.channel_name.lower().replace(" ", "") in image.lower_text:
+        elif self.channel_name.lower().replace(" ", "") not in image.lower_text:
             return f"{self.emoji()} | Screenshot must belong to [`{self.channel_name}`]({self.channel_link}) channel.\n"
 
         elif "SUBSCRIBE " in image.text.replace("\n", " "):
@@ -153,10 +151,10 @@ class SSVerify(BaseDbModel):
         return f"{self.emoji(True)} | Verified successfully.\n"
 
     async def verify_insta(self, ctx: Context, image: ImageResponse):
-        if not "followers" in image.lower_text:
+        if "followers" not in image.lower_text:
             return f"{self.emoji()} | This is not a valid instagram ss.\n"
 
-        elif not self.channel_name.lower().replace(" ", "") in image.lower_text:
+        elif self.channel_name.lower().replace(" ", "") not in image.lower_text:
             return f"{self.emoji()} | Screenshot must belong to [`{self.channel_name}`]({self.channel_link}) page.\n"
 
         elif "FOLLOW " in image.text.replace("\n", " "):
@@ -166,20 +164,20 @@ class SSVerify(BaseDbModel):
         return f"{self.emoji(True)} | Verified successfully.\n"
 
     async def verify_loco(self, ctx: Context, image: ImageResponse):
-        if not self.channel_name.lower().replace(" ", "") in image.lower_text:
+        if self.channel_name.lower().replace(" ", "") not in image.lower_text:
             return f"{self.emoji()} | Screenshot must belong to [`{self.channel_name}`]({self.channel_link}) channel.\n"
 
-        elif "FOLLOW" in image.text and not "FOLLOWING" in image.text:
+        elif "FOLLOW" in image.text and "FOLLOWING" not in image.text:
             return f"{self.emoji()} | You must follow [`{self.channel_name}`]({self.channel_link}) to get verified.\n"
 
         await self._add_to_data(ctx, image)
         return f"{self.emoji(True)} | Verified successfully.\n"
 
     async def verify_rooter(self, ctx: Context, image: ImageResponse):
-        if not self.channel_name.lower().replace(" ", "") in image.lower_text:
+        if self.channel_name.lower().replace(" ", "") not in image.lower_text:
             return f"{self.emoji()} | Screenshot must belong to [`{self.channel_name}`]({self.channel_link}) channel.\n"
 
-        elif "FOLLOW" in image.text and not "FOLLOWING" in image.text:
+        elif "FOLLOW" in image.text and "FOLLOWING" not in image.text:
             return f"{self.emoji()} | You must follow [`{self.channel_name}`]({self.channel_link}) to get verified.\n"
 
         await self._add_to_data(ctx, image)
@@ -187,7 +185,7 @@ class SSVerify(BaseDbModel):
 
     async def verify_custom(self, ctx: Context, image: ImageResponse):
 
-        if not any(_ in image.lower_text for _ in self.filtered_keywords):
+        if all(_ not in image.lower_text for _ in self.filtered_keywords):
             return f"{self.emoji()} | This is not a valid {self.keywords[0]} ss.\n"
 
         await self._add_to_data(ctx, image)

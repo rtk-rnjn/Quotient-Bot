@@ -156,8 +156,7 @@ async def should_open_scrim(scrim: Scrim):
         text += "You have setup an open role earlier and I couldn't find it."
 
     if not _bool:
-        logschan = scrim.logschan
-        if logschan:
+        if logschan := scrim.logschan:
             embed = discord.Embed(color=discord.Color.red())
             embed.description = text
             with suppress(discord.Forbidden, discord.NotFound):

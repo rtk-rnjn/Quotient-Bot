@@ -83,7 +83,7 @@ class TourneyGroupManager(EsportsBaseView):
         if len(_format) > 35:
             return await self.ctx.error("Name too long. Max 35 characters.", 4)
 
-        if not "{0}" in _format:
+        if "{0}" not in _format:
             return await self.ctx.error("No `{0}` found in input.", 4)
 
         p = await self.ctx.prompt(
@@ -103,7 +103,7 @@ class TourneyGroupManager(EsportsBaseView):
         _range = await inputs.string_input(self.ctx, delete_after=True)
         await self.ctx.safe_delete(m)
         _range = _range.strip().split("-")
-        if not len(_range) == 2:
+        if len(_range) != 2:
             return await self.ctx.error("Invalid format provided.", 4)
         try:
             x, y = tuple(map(int, _range))
@@ -127,7 +127,7 @@ class TourneyGroupManager(EsportsBaseView):
                 mention_everyone=True,
             )
 
-        await self.ctx.simple(f"Please wait ...", 5)
+        await self.ctx.simple("Please wait ...", 5)
         category = await self.ctx.guild.create_category(
             name=cat_name, overwrites=overwrites, reason="for group management by {0}".format(self.ctx.author)
         )
@@ -168,8 +168,7 @@ class TourneyGroupManager(EsportsBaseView):
         await _v.rendor(self.message)
 
     async def __get_or_create_role(self, name: str) -> T.Union[discord.Role, str]:
-        role = discord.utils.get(self.ctx.guild.roles, name=name)
-        if role:
+        if role := discord.utils.get(self.ctx.guild.roles, name=name):
             return role
 
         try:

@@ -56,12 +56,12 @@ class SaveBtn(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
-        await self.ctx.simple(f"Saving Changes...", 2)
+        await self.ctx.simple("Saving Changes...", 2)
 
         await self.scrim.make_changes(slotlist_format=self.view.formatted)
         await self.scrim.confirm_all_scrims(self.ctx, slotlist_format=self.view.formatted)
 
-        await self.ctx.success(f"Saved your new design!", 2)
+        await self.ctx.success("Saved your new design!", 2)
         self.view.stop()
 
         if self.msg:

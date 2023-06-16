@@ -41,7 +41,7 @@ class PremiumPurchaseBtn(discord.ui.Button):
             guild_id=interaction.guild.id,
             plan_id=v.plan,
         )
-        _link = config.PAY_LINK + "getpremium" + "?txnId=" + txn.txnid
+        _link = f"{config.PAY_LINK}getpremium?txnId={txn.txnid}"
 
         await interaction.followup.send(
             f"You are about to purchase Quotient Premium for **{interaction.guild.name}**.\n"
@@ -60,7 +60,8 @@ class PremiumView(discord.ui.View):
     @property
     def premium_embed(self) -> discord.Embed:
         _e = discord.Embed(
-            color=0x00FFB3, description=f"**You discovered a premium feature <a:premium:807911675981201459>**"
+            color=0x00FFB3,
+            description="**You discovered a premium feature <a:premium:807911675981201459>**",
         )
         _e.description = (
             f"\n*`{self.text}`*\n\n"

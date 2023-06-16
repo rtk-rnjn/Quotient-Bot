@@ -160,7 +160,8 @@ class ScrimsMain(ScrimsView):
             await scrim.make_changes(stoggle=not scrim.stoggle)
 
         await self.ctx.success(
-            f"Done! Note that registration of disabled scrims will not be opened, until they are enabled back.", 6
+            "Done! Note that registration of disabled scrims will not be opened, until they are enabled back.",
+            6,
         )
 
         v = ScrimsMain(self.ctx)

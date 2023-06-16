@@ -131,7 +131,10 @@ class ScrimEvents(Cog):
             scrim_id=scrim.id,
         )  # we don't want to risk this
 
-        if scrim.toggle is not True or not Day(utils.day_today()) in scrim.open_days:
+        if (
+            scrim.toggle is not True
+            or Day(utils.day_today()) not in scrim.open_days
+        ):
             return
 
         if scrim.opened_at and scrim.opened_at.strftime("%d-%b-%Y %I:%M %p") == datetime.now(tz=IST).strftime(
@@ -208,7 +211,11 @@ class ScrimEvents(Cog):
 
         reason = timer.kwargs["reason"]
 
-        new_reason = ("[Auto-Unban] because ban time's up.") + f"\nBanned for: {reason}" if reason else ""
+        new_reason = (
+            f"[Auto-Unban] because ban time's up.\nBanned for: {reason}"
+            if reason
+            else ""
+        )
 
         scrims = await Scrim.filter(pk__in=scrims)
         if not scrims:

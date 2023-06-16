@@ -27,7 +27,7 @@ class Next(ScrimsButton):
             next_id = _ids[0]
 
         new_scrim = await Scrim.get(pk=next_id)
-        if not self.view.record == new_scrim:
+        if self.view.record != new_scrim:
             self.view.record = new_scrim
             await self.view.refresh_view()
 
@@ -49,7 +49,7 @@ class Prev(ScrimsButton):
             next_id = _ids[-1]
 
         new_scrim = await Scrim.get(pk=next_id)
-        if not self.view.record == new_scrim:
+        if self.view.record != new_scrim:
             self.view.record = new_scrim
             await self.view.refresh_view()
 

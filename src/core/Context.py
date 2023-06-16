@@ -169,13 +169,11 @@ class Context(commands.Context["commands.Bot"], Generic[BotT]):
 
     async def send(self, content: Any = None, **kwargs: Any) -> Optional[discord.Message]:
         if not (_perms := self.channel.permissions_for(self.me)).send_messages:
-            try:
+            with suppress(discord.Forbidden):
                 await self.author.send(
                     "I can't send any messages in that channel. \nPlease give me sufficient permissions to do so.",
                     view=self.get_dm_view(f"Sent from #{self.channel.name} in {self.guild.name}")
                 )
-            except discord.Forbidden:
-                pass
             return None
 
         require_embed_perms = kwargs.pop("embed_perms", False)

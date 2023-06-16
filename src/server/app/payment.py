@@ -60,10 +60,10 @@ async def premium_success(request: Request, txnId: str):
     except:
         return {"error": "Invalid Request."}
 
-    if not "payu" in request.headers.get("origin"):
+    if "payu" not in request.headers.get("origin"):
         return {"error": "Invalid Request Origin."}
 
-    if not form.get("status") == "success":
+    if form.get("status") != "success":
         return {"error": f"Transaction Status: {form.get('status')}"}
 
     record = await PremiumTxn.get_or_none(txnid=txnId)
@@ -98,7 +98,7 @@ async def premium_failed(request: Request, txnId: str):
     except:
         return {"error": "Invalid Request."}
 
-    if not "payu" in request.headers.get("origin"):
+    if "payu" not in request.headers.get("origin"):
         return {"error": "Invalid Request Origin."}
 
     await PremiumTxn.get(txnid=txnId).update(completed_at=datetime.now(constants.IST), raw_data=dict(form))

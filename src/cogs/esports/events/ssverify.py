@@ -35,7 +35,7 @@ class Ssverification(Cog):
     def __init__(self, bot: Quotient):
         self.bot = bot
 
-        self.request_url = self.bot.config.FASTAPI_URL + "/ocr"
+        self.request_url = f"{self.bot.config.FASTAPI_URL}/ocr"
         self.headers = {
             "authorization": self.bot.config.FASTAPI_KEY,
             "Content-Type": "application/json",
@@ -148,7 +148,7 @@ class Ssverification(Cog):
                 await message.author.add_roles(discord.Object(id=record.role_id))  # type: ignore # line guarded #70-76
 
                 if record.success_message:
-                    _e.title = f"Screenshot Verification Complete"
+                    _e.title = "Screenshot Verification Complete"
                     _e.url, _e.description = message.jump_url, record.success_message
 
                     return await message.reply(embed=_e)

@@ -18,12 +18,7 @@ def get_chunks(iterable, size: int):
 def split_list(data: list, per_list: int):
     data = list(data)
 
-    new = []
-
-    for i in range(0, len(data), per_list):
-        new.append(data[i : i + per_list])
-
-    return new
+    return [data[i : i + per_list] for i in range(0, len(data), per_list)]
 
 
 def find_team(message: discord.Message):
@@ -37,8 +32,7 @@ def find_team(message: discord.Message):
     # teamname = (re.sub(r"\b[0-9]+\b\s*|team|name|[^\w\s]", "", teamname.group())).strip()
     teamname: str = re.sub(r"<@*#*!*&*\d+>|team|name|[^\w\s]", "", teamname.group()).strip()
 
-    teamname = f"Team {teamname.title()}" if teamname else f"{author}'s team"
-    return teamname
+    return f"Team {teamname.title()}" if teamname else f"{author}'s team"
 
 
 def regional_indicator(c: str) -> str:
@@ -68,5 +62,4 @@ def get_ipm(bot):
     """Returns Quotient's cmds invoke rate per minute"""
     time = (datetime.now(tz=IST) - bot.start_time).total_seconds()
     per_second = bot.cmd_invokes / time
-    per_minute = per_second * 60
-    return per_minute
+    return per_second * 60

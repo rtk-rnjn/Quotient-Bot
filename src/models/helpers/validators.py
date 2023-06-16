@@ -11,5 +11,5 @@ class ValueRangeValidator(Validator):
         self._range = _range
 
     def __call__(self, value: int):
-        if not value in self._range:
+        if value not in self._range:
             raise ValidationError(f"The value must be a number between `{self._range.start}` and `{self._range.stop}`.")

@@ -17,17 +17,15 @@ class ScrimSelector(discord.ui.Select):
 
     def __init__(self, placeholder: str, scrims: List[Scrim], max_values=25):
 
-        _options = []
-        for scrim in scrims:
-            _options.append(
-                discord.SelectOption(
-                    label=scrim.registration_channel.name,  # type: ignore
-                    value=scrim.id,
-                    description=f"{scrim.name} (ScrimID: {scrim.id})",
-                    emoji=emote.TextChannel,
-                )
+        _options = [
+            discord.SelectOption(
+                label=scrim.registration_channel.name,  # type: ignore
+                value=scrim.id,
+                description=f"{scrim.name} (ScrimID: {scrim.id})",
+                emoji=emote.TextChannel,
             )
-
+            for scrim in scrims
+        ]
         # print(scrims, _options)
         super().__init__(placeholder=placeholder, options=_options, max_values=max_values)
 
@@ -94,7 +92,7 @@ async def prompt_selector(ctx: Context, scrims: List[Scrim] = None, *, placehold
         with suppress(discord.HTTPException):
             await view.message.delete()
 
-        if not len(view.custom_id) > 1:
+        if len(view.custom_id) <= 1:
             return await Scrim.get_or_none(pk=view.custom_id[0])
 
         return await Scrim.filter(pk__in=view.custom_id)
@@ -104,17 +102,15 @@ class Select(discord.ui.Select):
     view: QuotientView
 
     def __init__(self, placeholder: str, scrims: List[Scrim], multi: bool):
-        _options = []
-        for scrim in scrims:
-            _options.append(
-                discord.SelectOption(
-                    label=getattr(scrim.registration_channel, "name", "deleted-channel"),  # type: ignore
-                    value=scrim.id,
-                    description=f"{scrim.name} (ScrimID: {scrim.id})",
-                    emoji=emote.TextChannel,
-                )
+        _options = [
+            discord.SelectOption(
+                label=getattr(scrim.registration_channel, "name", "deleted-channel"),  # type: ignore
+                value=scrim.id,
+                description=f"{scrim.name} (ScrimID: {scrim.id})",
+                emoji=emote.TextChannel,
             )
-
+            for scrim in scrims
+        ]
         super().__init__(placeholder=placeholder, options=_options, max_values=len(_options) if multi else 1)
 
     async def callback(self, interaction: discord.Interaction):

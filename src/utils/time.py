@@ -108,8 +108,8 @@ class FutureTime(Time):
 class BetterFutureTime:
     @classmethod
     async def convert(cls, ctx, argument: str):
-        if not "in" in argument:
-            argument = "in " + argument
+        if "in" not in argument:
+            argument = f"in {argument}"
 
         parsed = dateparser.parse(
             argument,
@@ -144,9 +144,7 @@ def strtime(target):
 
 
 def discord_timestamp(time_to_convert, mode="R"):
-    formated_strftime = f"<t:{int(time_to_convert.timestamp())}:{mode}>"
-
-    return formated_strftime
+    return f"<t:{int(time_to_convert.timestamp())}:{mode}>"
 
 
 # def strtime(target):
@@ -164,7 +162,7 @@ def human_join(seq, delim=", ", final="or"):
     if size == 2:
         return f"{seq[0]} {final} {seq[1]}"
 
-    return delim.join(seq[:-1]) + f" {final} {seq[-1]}"
+    return f"{delim.join(seq[:-1])} {final} {seq[-1]}"
 
 
 def human_timedelta(dt, *, source=None, accuracy=3, brief=False, suffix=True):
@@ -196,13 +194,12 @@ def human_timedelta(dt, *, source=None, accuracy=3, brief=False, suffix=True):
 
     output = []
     for attr, brief_attr in attrs:
-        elem = getattr(delta, attr + "s")
+        elem = getattr(delta, f"{attr}s")
         if not elem:
             continue
 
         if attr == "day":
-            weeks = delta.weeks
-            if weeks:
+            if weeks := delta.weeks:
                 elem -= weeks * 7
                 if not brief:
                     output.append(format(plural(weeks), "week"))
@@ -301,9 +298,9 @@ class UserFriendlyTime(commands.Converter):
             if argument.endswith("from now"):
                 argument = argument[:-8].strip()
 
-            if argument[0:2] == "me":
+            if argument[:2] == "me":
                 # starts with "me to", "me in", or "me at "
-                if argument[0:6] in ("me to ", "me in ", "me at "):
+                if argument[:6] in ("me to ", "me in ", "me at "):
                     argument = argument[6:]
 
             elements = calendar.nlp(argument, sourceTime=now)
@@ -344,7 +341,7 @@ class UserFriendlyTime(commands.Converter):
                     if argument[0] != '"':
                         raise commands.BadArgument("Expected quote before time input...")
 
-                    if not (end < len(argument) and argument[end] == '"'):
+                    if end >= len(argument) or argument[end] != '"':
                         raise commands.BadArgument("If the time is quoted, you must unquote it.")
 
                     remaining = argument[end + 1 :].lstrip(" ,.!")

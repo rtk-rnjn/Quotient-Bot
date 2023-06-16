@@ -74,7 +74,7 @@ class TourneyGroupManager(EsportsBaseView):
     @discord.ui.button(custom_id="give_group_roles", label="Give Roles")
     async def give_group_roles(self, interaction: discord.Interaction, button: discord.Button):
         await interaction.response.defer(ephemeral=True)
-        if not len(self.ctx.guild.roles) < 235:
+        if len(self.ctx.guild.roles) >= 235:
             return await self.error_embed(
                 "Your server is about to hit the max roles limit (250 roles), please delete some first."
             )
@@ -105,7 +105,9 @@ class TourneyGroupManager(EsportsBaseView):
         _split = _roleinfo.split("\n")
 
         if len(_split) > 15:
-            return await self.error_embed(f"Group Roles can be given to upto 15 groups at a time.")
+            return await self.error_embed(
+                "Group Roles can be given to upto 15 groups at a time."
+            )
 
         for _group in _split:
             try:
@@ -155,10 +157,9 @@ class TourneyGroupManager(EsportsBaseView):
             try:
                 counter = 0
                 for _slot in actual_group:
-                    member = self.ctx.guild.get_member(_slot.leader_id)
-                    if member:
+                    if member := self.ctx.guild.get_member(_slot.leader_id):
                         counter += 1
-                        if not role in member.roles:
+                        if role not in member.roles:
                             self.bot.loop.create_task(
                                 member.add_roles(role, reason=f"Given by {self.ctx.author} for tourney grouping")
                             )
@@ -200,7 +201,7 @@ class GroupListView(EsportsBaseView):
 
     @staticmethod
     def initial_embed(tourney: Tourney) -> discord.Embed:
-        _e = discord.Embed(
+        return discord.Embed(
             color=0x00FFB3,
             description=(
                 f"**How would you like to publish the group list of {tourney}?**\n\n"
@@ -209,8 +210,6 @@ class GroupListView(EsportsBaseView):
                 "*Webhook Option is more cool.*"
             ),
         )
-
-        return _e
 
     @discord.ui.button(custom_id="publish_g_hook", emoji="<a:diamond:899295009289949235>", label="Webhook (Recommended)")
     async def publish_groups_webhook(self, interaction: discord.Interaction, button: discord.Button):

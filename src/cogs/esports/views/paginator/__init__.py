@@ -44,7 +44,7 @@ class SkipToButton(discord.ui.Button):
         await interaction.response.defer()
 
         m = await self.ctx.simple(
-            "Please enter the page number you want to skip to. (`1` to `{}`)".format(len(self.view.records))
+            f"Please enter the page number you want to skip to. (`1` to `{len(self.view.records)}`)"
         )
         _page = await integer_input(self.ctx, timeout=30, delete_after=True, limits=(1, len(self.view.records)))
         await self.ctx.safe_delete(m)

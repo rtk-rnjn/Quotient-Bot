@@ -34,18 +34,11 @@ class ScrimBanManager(ScrimsView):
         _e = discord.Embed(color=self.bot.color)
         _e.description = f"**Ban / Unban users from {self.record}**\n\n__Banned:__\n"
 
-        t = ""
-        for idx, _ in enumerate(banned, 1):
-            t += (
-                f"`{idx:02}.` {getattr(self.bot.get_user(_.user_id),'mention','`unknown-user`')} "
-                f"`[{_.user_id}]` - {discord_timestamp(_.expires) if _.expires else 'Lifetime'}\n"
-            )
-
-        if t != "":
-            _e.description += truncate_string(t, 3900)
-        else:
-            _e.description += "```\nNo Banned user\n```"
-
+        t = "".join(
+            f"`{idx:02}.` {getattr(self.bot.get_user(_.user_id), 'mention', '`unknown-user`')} `[{_.user_id}]` - {discord_timestamp(_.expires) if _.expires else 'Lifetime'}\n"
+            for idx, _ in enumerate(banned, 1)
+        )
+        _e.description += truncate_string(t, 3900) if t else "```\nNo Banned user\n```"
         _e.set_author(name=f"Page - {' / '.join(await self.record.scrim_posi())}", icon_url=self.bot.user.avatar.url)
 
         return _e
@@ -102,7 +95,7 @@ class Ban(ScrimsButton):
         if modal.m_time.value:
             with suppress(TypeError):
                 expires = dateparser.parse(
-                    "in " + modal.m_time.value,
+                    f"in {modal.m_time.value}",
                     settings={
                         "RELATIVE_BASE": self.view.ctx.bot.current_time,
                         "TIMEZONE": "Asia/Kolkata",
@@ -224,18 +217,15 @@ class BanSelector(discord.ui.Select):
     view: QuotientView
 
     def __init__(self, ctx: Context, teams: T.List[BannedTeam]):
-        _options = []
-
-        for _ in teams:
-            _options.append(
-                discord.SelectOption(
-                    label=f"{getattr(ctx.bot.get_user(_.user_id),'name','unknown-user')} [{_.user_id}]",
-                    description=f"Expires: {_.expires.strftime('%d %b %Y %H:%M') if _.expires else 'Never'}",
-                    emoji=emote.TextChannel,
-                    value=_.id,
-                )
+        _options = [
+            discord.SelectOption(
+                label=f"{getattr(ctx.bot.get_user(_.user_id),'name','unknown-user')} [{_.user_id}]",
+                description=f"Expires: {_.expires.strftime('%d %b %Y %H:%M') if _.expires else 'Never'}",
+                emoji=emote.TextChannel,
+                value=_.id,
             )
-
+            for _ in teams
+        ]
         super().__init__(placeholder="Select the players to Unban...", options=_options, max_values=len(_options))
 
     async def callback(self, interaction: discord.Interaction):

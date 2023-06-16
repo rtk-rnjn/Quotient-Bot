@@ -42,8 +42,10 @@ class ScrimsSlotlistEditor(discord.ui.View):
             return await self.message.edit(view=self)
 
     def initial_embed(self) -> discord.Embed:
-        _e = discord.Embed(color=0x00FFB3, description="Choose an option below to edit the slotlist.")
-        return _e
+        return discord.Embed(
+            color=0x00FFB3,
+            description="Choose an option below to edit the slotlist.",
+        )
 
     @discord.ui.button(style=discord.ButtonStyle.success, label="Change Team", custom_id="smslot_change_team")
     async def change_team_name(self, interaction: discord.Interaction, button: discord.Button):

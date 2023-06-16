@@ -63,7 +63,7 @@ class GroupRefresh(discord.ui.View):
         await interaction.response.defer()
 
         _checks = await self.__do_checks(interaction)
-        if not len(_checks) == 3:
+        if len(_checks) != 3:
             return
 
         record, tourney, group = _checks
@@ -94,10 +94,7 @@ class GroupRefresh(discord.ui.View):
 
     async def __do_checks(self, interaction: discord.Interaction, refresh_too=False):
         record = await TGroupList.get_or_none(pk=interaction.message.id)
-        tourney = None
-        if record:
-            tourney = await Tourney.get_or_none(pk=record.tourney_id)
-
+        tourney = await Tourney.get_or_none(pk=record.tourney_id) if record else None
         if not record or not tourney:
             self.children[0].disabled = True
             return await interaction.edit_original_response(view=self)

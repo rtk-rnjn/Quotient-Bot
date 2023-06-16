@@ -74,23 +74,36 @@ class TourneyEditor(TourneyView):
 
         fields = {
             "Name": f"`{tourney.name}`",
-            "Registration Channel": getattr(tourney.registration_channel, "mention", "`channel-deleted`"),
-            "Confirm Channel": getattr(tourney.confirm_channel, "mention", "`channel-deleted`"),
+            "Registration Channel": getattr(
+                tourney.registration_channel, "mention", "`channel-deleted`"
+            ),
+            "Confirm Channel": getattr(
+                tourney.confirm_channel, "mention", "`channel-deleted`"
+            ),
             "Success Role": getattr(tourney.role, "mention", "`role-deleted`"),
             "Mentions": f"`{tourney.required_mentions}`",
             "Slots": f"`{tourney.total_slots:,}`",
             f"Reactions {self.bot.config.PRIME_EMOJI}": f"{tourney.check_emoji},{tourney.cross_emoji}",
             "Ping Role": getattr(tourney.ping_role, "mention", "`Not-Set`"),
             "Open Role": getattr(tourney.open_role, "mention", "`role-deleted`"),
-            "Multi-Register": ("`Not allowed!`", "`Allowed`")[tourney.multiregister],
-            "Team-Name Compulsion": ("`No!`", "`Yes!`")[tourney.teamname_compulsion],
-            "Duplicate Team Name": ("`Allowed`", "`Not allowed!`")[tourney.no_duplicate_name],
-            "Autodelete Rejected": ("`No!`", "`Yes!`")[tourney.autodelete_rejected],
-            "Success Message": f"`Click to view / edit`",
-            "Teams per Group": f"`{self.record.group_size or 'Not set'}`",
-            f"Required Lines {self.bot.config.PRIME_EMOJI}": ("`Not set`", f"`{tourney.required_lines}`")[
-                bool(tourney.required_lines)
+            "Multi-Register": ("`Not allowed!`", "`Allowed`")[
+                tourney.multiregister
             ],
+            "Team-Name Compulsion": ("`No!`", "`Yes!`")[
+                tourney.teamname_compulsion
+            ],
+            "Duplicate Team Name": ("`Allowed`", "`Not allowed!`")[
+                tourney.no_duplicate_name
+            ],
+            "Autodelete Rejected": ("`No!`", "`Yes!`")[
+                tourney.autodelete_rejected
+            ],
+            "Success Message": "`Click to view / edit`",
+            "Teams per Group": f"`{self.record.group_size or 'Not set'}`",
+            f"Required Lines {self.bot.config.PRIME_EMOJI}": (
+                "`Not set`",
+                f"`{tourney.required_lines}`",
+            )[bool(tourney.required_lines)],
         }
 
         for idx, (name, value) in enumerate(fields.items()):

@@ -25,11 +25,7 @@ async def do_removal(ctx: Context, limit, predicate, *, before=None, after=None)
     if limit > 2000:
         return await ctx.error(f"Too many messages to search given ({limit}/2000)")
 
-    if before is None:
-        before = ctx.message
-    else:
-        before = discord.Object(id=before)
-
+    before = ctx.message if before is None else discord.Object(id=before)
     if after is not None:
         after = discord.Object(id=after)
 

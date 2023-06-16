@@ -28,7 +28,7 @@ class ScrimsSlash(commands.GroupCog, name="scrims"):
             await interaction.response.send_message(
                 embed=discord.Embed(
                     color=discord.Color.red(),
-                    description=f"You need `scrims-mod` role or `Manage-Server` permissions to use this command.",
+                    description="You need `scrims-mod` role or `Manage-Server` permissions to use this command.",
                 )
             )
             return False

@@ -16,7 +16,7 @@ class QuoSocket(socketio.AsyncClient):
 
     async def emit(self, event, data=None, namespace=None, callback=None):
         return await super().emit(
-            "response__" + event, data=data, namespace=namespace, callback=callback
+            f"response__{event}", data=data, namespace=namespace, callback=callback
         )
 
     async def request(self, event, data=None, namespace=None, callback=None):
@@ -47,4 +47,4 @@ async def catch_all(event, data):
 
     r, e, u = event.split("__")
     data["user__id"] = u
-    sio.bot.dispatch(r + "__" + e, u, data)
+    sio.bot.dispatch(f"{r}__{e}", u, data)

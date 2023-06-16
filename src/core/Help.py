@@ -35,7 +35,7 @@ class HelpCommand(commands.HelpCommand):
 
         server = f"[Support Server]({config.SERVER_LINK})"
         invite = f"[Invite Me]({config.BOT_INVITE})"
-        dashboard = f"[Privacy Policy](https://github.com/quotientbot/Quotient-Bot/wiki/privacy-policy)"
+        dashboard = "[Privacy Policy](https://github.com/quotientbot/Quotient-Bot/wiki/privacy-policy)"
 
         embed.description = f"{server} **|** {invite} **|** {dashboard}\n\n"
 
@@ -113,7 +113,7 @@ class HelpCommand(commands.HelpCommand):
 
     async def send_command_help(self, cmd: commands.Command):
         embed = discord.Embed(color=self.color)
-        embed.title = "Command: " + cmd.qualified_name
+        embed.title = f"Command: {cmd.qualified_name}"
 
         examples = []
 

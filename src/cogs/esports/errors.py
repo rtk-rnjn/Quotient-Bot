@@ -31,8 +31,7 @@ class SMError(Cog):
 
     @staticmethod
     def red_embed(description: str):
-        embed = discord.Embed(color=discord.Color.red(), description=description)
-        return embed
+        return discord.Embed(color=discord.Color.red(), description=description)
 
     @Cog.listener()
     async def on_tourney_registration_deny(self, message: discord.Message, _type: RegDeny, tourney: Tourney):
@@ -51,7 +50,7 @@ class SMError(Cog):
                     embed=self.red_embed("Don't mention Bots. Mention your real teammates."),
                     delete_after=5,
                 )
-                text += f"Mentioned Bots."
+                text += "Mentioned Bots."
 
             elif _type == RegDeny.nomention:
                 await message.reply(
@@ -70,7 +69,7 @@ class SMError(Cog):
                     ),
                     delete_after=5,
                 )
-                text += f"They are banned from tournament."
+                text += "They are banned from tournament."
 
             elif _type == RegDeny.multiregister:
                 await message.reply(
@@ -92,7 +91,7 @@ class SMError(Cog):
                     embed=self.red_embed(f"{str(message.author)}, Someone already registered with the same team name."),
                     delete_after=5,
                 )
-                text += f"Duplicate teamname. Someone already registered with the same team name."
+                text += "Duplicate teamname. Someone already registered with the same team name."
 
             elif _type == RegDeny.nolines:
                 await message.reply(
@@ -101,7 +100,7 @@ class SMError(Cog):
                     ),
                     delete_after=5,
                 )
-                text += f"Insufficient lines in their registration message."
+                text += "Insufficient lines in their registration message."
 
             if tourney.autodelete_rejected:
                 self.bot.loop.create_task(delete_denied_message(message))
@@ -146,7 +145,9 @@ class SMError(Cog):
 
         with suppress(discord.Forbidden, AttributeError):
             await logschan.send(
-                content=modrole.mention if modrole is not None and important is True else None,
+                content=modrole.mention
+                if modrole is not None and important
+                else None,
                 embed=embed,
                 allowed_mentions=discord.AllowedMentions(roles=True),
             )
@@ -194,7 +195,9 @@ class SMError(Cog):
             #     embed.description = f"Registration of [{message.author}]({message.jump_url}) has been accepted in {message.channel.mention}"
 
             await logschan.send(
-                content=modrole.mention if modrole is not None and important is True else None,
+                content=modrole.mention
+                if modrole is not None and important
+                else None,
                 embed=embed,
                 allowed_mentions=discord.AllowedMentions(roles=True),
             )
@@ -218,7 +221,7 @@ class SMError(Cog):
                     embed=self.red_embed("Don't mention Bots. Mention your real teammates."),
                     delete_after=5,
                 )
-                text += f"Mentioned Bots."
+                text += "Mentioned Bots."
 
             elif _type == RegDeny.nomention:
                 await message.reply(
@@ -234,7 +237,7 @@ class SMError(Cog):
                     embed=self.red_embed(f"{str(message.author)}, You are banned from the scrims. You cannot register."),
                     delete_after=5,
                 )
-                text += f"They are banned from scrims."
+                text += "They are banned from scrims."
 
             elif _type == RegDeny.multiregister:
                 await message.reply(
@@ -266,7 +269,7 @@ class SMError(Cog):
                     ),
                     delete_after=5,
                 )
-                text += f"Insufficient lines in their registration message."
+                text += "Insufficient lines in their registration message."
 
             # elif _type == RegDeny.bannedteammate:
             #     await message.reply(

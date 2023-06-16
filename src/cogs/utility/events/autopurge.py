@@ -29,10 +29,10 @@ class AutoPurgeEvents(Cog):
             return
 
         channel = message.channel
-        content = message.content if message.content else "*[Content Unavailable]*"
-
-        if not channel.type == discord.ChannelType.text:
+        if channel.type != discord.ChannelType.text:
             return
+
+        content = message.content if message.content else "*[Content Unavailable]*"
 
         await Snipe.update_or_create(
             channel_id=channel.id,
@@ -45,7 +45,10 @@ class AutoPurgeEvents(Cog):
 
     @Cog.listener()
     async def on_message(self, message: discord.Message):
-        if not message.guild or not message.channel.id in self.bot.cache.autopurge_channels:
+        if (
+            not message.guild
+            or message.channel.id not in self.bot.cache.autopurge_channels
+        ):
             return
 
         record = await AutoPurge.get_or_none(channel_id=message.channel.id)

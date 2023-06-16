@@ -220,7 +220,9 @@ class TourneyEvents(Cog):
             await message.add_reaction(tourney.cross_emoji)
             return await message.reply(embed=_e, delete_after=7)
 
-        if not message.author.id in get_tourney_slots(await partner_tourney.assigned_slots.all()):
+        if message.author.id not in get_tourney_slots(
+            await partner_tourney.assigned_slots.all()
+        ):
             await message.add_reaction(tourney.cross_emoji)
 
             _e = discord.Embed(
@@ -262,8 +264,7 @@ class TourneyEvents(Cog):
                     self.bot.loop.create_task(update_confirmed_message(tourney, slot.confirm_jump_url))
 
                 if await tourney.assigned_slots.filter(leader_id=slot.leader_id).count() == 1:
-                    m = tourney.guild.get_member(slot.leader_id)
-                    if m:
+                    if m := tourney.guild.get_member(slot.leader_id):
                         self.bot.loop.create_task(m.remove_roles(tourney.role))
 
                 await TMSlot.filter(pk=slot.pk).delete()
@@ -277,36 +278,37 @@ class TourneyEvents(Cog):
 
     @Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if before.roles != after.roles:
-            tourney = await Tourney.filter(guild_id=before.guild.id).first()
-            if not tourney:
-                return
+        if before.roles == after.roles:
+            return
+        tourney = await Tourney.filter(guild_id=before.guild.id).first()
+        if not tourney:
+            return
 
-            msg = None
-            if role := tourney.modrole:
-                if role in after.roles and not role in before.roles:
-                    msg = (
-                        f"Congratulations {before.mention} on becoming a {role.mention},\n\n"
-                        "Here's a list of perks you get with the new responsibilities:\n"
-                        "• You can now use all `qtourney` commands.\n"
-                        "• You can now edit, manage or even delete any tourney.\n"
-                        "• **Your messages are now ignored in all the registration channels.**\n\n"
-                        "Good luck!"
-                    )
+        msg = None
+        if role := tourney.modrole:
+            if role in after.roles and role not in before.roles:
+                msg = (
+                    f"Congratulations {before.mention} on becoming a {role.mention},\n\n"
+                    "Here's a list of perks you get with the new responsibilities:\n"
+                    "• You can now use all `qtourney` commands.\n"
+                    "• You can now edit, manage or even delete any tourney.\n"
+                    "• **Your messages are now ignored in all the registration channels.**\n\n"
+                    "Good luck!"
+                )
 
-                elif role in before.roles and not role in after.roles:
-                    msg = (
-                        f"{before.mention} is no longer a {role.mention},\n"
-                        "All the special perks they enjoyed, are now revoked."
-                    )
+            elif role in before.roles and role not in after.roles:
+                msg = (
+                    f"{before.mention} is no longer a {role.mention},\n"
+                    "All the special perks they enjoyed, are now revoked."
+                )
 
-                if msg:
-                    with suppress(discord.HTTPException, AttributeError):
-                        await tourney.logschan.send(msg)
+            if msg:
+                with suppress(discord.HTTPException, AttributeError):
+                    await tourney.logschan.send(msg)
 
     @Cog.listener()
     async def on_guild_channel_update(self, before: discord.TextChannel, after: discord.TextChannel):
-        if before.name == after.name or not before.name == "quotient-tourney-logs":
+        if before.name == after.name or before.name != "quotient-tourney-logs":
             return
 
         if after.permissions_for(after.guild.me).manage_channels:
@@ -328,7 +330,7 @@ class TourneyEvents(Cog):
 
     @Cog.listener()
     async def on_guild_role_update(self, before: discord.Role, after: discord.Role):
-        if before.name == after.name or not before.name == "tourney-mod":
+        if before.name == after.name or before.name != "tourney-mod":
             return
 
         if after.guild.me.guild_permissions.manage_roles:
@@ -342,8 +344,9 @@ class TourneyEvents(Cog):
             ),
         )
 
-        c = discord.utils.get(after.guild.text_channels, name="quotient-tourney-logs")
-        if c:
+        if c := discord.utils.get(
+            after.guild.text_channels, name="quotient-tourney-logs"
+        ):
             await c.send(
                 embed=_e, content=getattr(after.guild.owner, "mention")
             )  # there is very less chances of getting attribute error on `owner.mention`

@@ -204,7 +204,7 @@ class SaveMessageBtn(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
-        await self.ctx.simple(f"Saving Changes...", 2)
+        await self.ctx.simple("Saving Changes...", 2)
 
         if self._type == MsgType.open:
             await self.scrim.make_changes(open_message=self.view.formatted)
@@ -219,7 +219,7 @@ class SaveMessageBtn(discord.ui.Button):
             await self.scrim.make_changes(cdn=self.scrim.cdn)
             await self.scrim.confirm_all_scrims(self.ctx, cdn=self.scrim.cdn)
 
-        await self.ctx.success(f"Saved!", 2)
+        await self.ctx.success("Saved!", 2)
 
         self.view.stop()
 

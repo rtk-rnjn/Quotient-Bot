@@ -53,10 +53,7 @@ draw.text((905, top), "Total Pt", fill, font=font)
 
 draw.text((1060, top), "Win?", fill, font=font)
 
-_list = []
-
-_list.append(image)
-
+_list = [image]
 
 _dict = {
     "quotient": [1, 20, 20, 40],

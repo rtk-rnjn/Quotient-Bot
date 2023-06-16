@@ -203,7 +203,7 @@ class SetEmojis(TourneyButton):
         await self.ctx.safe_delete(m)
 
         emojis = emojis.strip().split(",")
-        if not len(emojis) == 2:
+        if len(emojis) != 2:
             return await interaction.followup.send("You didn't enter the correct format.", ephemeral=True)
 
         check, cross = emojis

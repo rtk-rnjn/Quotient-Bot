@@ -70,11 +70,8 @@ class Tourney(BaseDbModel):
         except ValueError:
             pass
         else:
-            try:
+            with suppress(exceptions.DoesNotExist):
                 return await cls.get(pk=argument, guild_id=ctx.guild.id)
-            except exceptions.DoesNotExist:
-                pass
-
         raise BadArgument(f"This is not a valid Tourney ID.\n\nGet a valid ID with `{ctx.prefix}tourney config`")
 
     @property
@@ -120,9 +117,7 @@ class Tourney(BaseDbModel):
     @property
     def ping_role(self):
         if (g := self.guild) is not None:
-            if self.ping_role_id is not None:
-                return g.get_role(self.ping_role_id)
-            return None
+            return g.get_role(self.ping_role_id) if self.ping_role_id is not None else None
 
     @property
     def modrole(self):
@@ -174,7 +169,7 @@ class Tourney(BaseDbModel):
         """
         with suppress(discord.HTTPException):
 
-            if not (_role := self.role) in ctx.author.roles:
+            if (_role := self.role) not in ctx.author.roles:
                 await ctx.author.add_roles(_role)
 
             await ctx.message.add_reaction(self.check_emoji)
@@ -379,8 +374,7 @@ class Tourney(BaseDbModel):
         await slot.delete()
 
         if not await self.assigned_slots.filter(leader_id=slot.leader_id).exists():
-            m = self.guild.get_member(slot.leader_id)
-            if m:
+            if m := self.guild.get_member(slot.leader_id):
                 await m.remove_roles(discord.Object(id=self.role_id))
 
     async def update_confirmed_message(self, link: str):
@@ -392,7 +386,7 @@ class Tourney(BaseDbModel):
             if message:
                 e = message.embeds[0]
 
-                e.description = "~~" + e.description.strip() + "~~"
+                e.description = f"~~{e.description.strip()}~~"
                 e.title = "Cancelled Slot"
                 e.color = discord.Color.red()
 

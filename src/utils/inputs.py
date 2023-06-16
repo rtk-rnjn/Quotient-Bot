@@ -76,15 +76,15 @@ async def role_input(ctx: Context, check=None, timeout=120, hierarchy=True, chec
 
     else:
         if role.managed:
-            raise InputError(f"Role is an integrated role and cannot be added manually.")
+            raise InputError("Role is an integrated role and cannot be added manually.")
         if hierarchy:
             if role > ctx.me.top_role:
                 raise InputError(
                     f"The position of {role.mention} is above my top role. So I can't give it to anyone.\nKindly move {ctx.me.top_role.mention} above {role.mention} in Server Settings."
                 )
 
-            if ctx.author.id != ctx.guild.owner_id:
-                if role > ctx.author.top_role:
+            if role > ctx.author.top_role:
+                if ctx.author.id != ctx.guild.owner_id:
                     raise InputError(
                         f"The position of {role.mention} is above your top role {ctx.author.top_role.mention}."
                     )
@@ -149,9 +149,7 @@ async def integer_input(ctx: Context, check=None, timeout=120, limits=(None, Non
 
             if all(limits):
                 return low <= digit <= high
-            if low is not None:
-                return low <= digit
-            return high <= digit
+            return low <= digit if low is not None else high <= digit
 
     try:
         message: discord.Message = await ctx.bot.wait_for("message", check=new_check, timeout=timeout)
@@ -263,4 +261,4 @@ async def text_or_embed(ctx: Context, check, timeout=120, delete_after=False):
         return text
 
     if str(reaction.emoji) == keycap_digit(2):
-        msg = await ctx.simple(f"embed ki .......")
+        msg = await ctx.simple("embed ki .......")

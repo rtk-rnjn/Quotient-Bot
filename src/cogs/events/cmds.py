@@ -33,10 +33,7 @@ class CmdEvents(Cog):
             await ctx.error(t)
             return False
 
-        if not ctx.guild:
-            return False
-
-        return True
+        return bool(ctx.guild)
 
     @Cog.listener()
     async def on_command_completion(self, ctx: Context):

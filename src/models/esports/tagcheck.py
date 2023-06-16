@@ -27,7 +27,7 @@ class TagCheck(BaseDbModel):
 
     @property
     def ignorerole(self) -> Optional[discord.Role]:
-        if not self._guild is None:
+        if self._guild is not None:
             return discord.utils.get(self._guild.roles, name="quotient-tag-ignore")
 
     def __str__(self):
@@ -53,5 +53,5 @@ class EasyTag(BaseDbModel):
 
     @property
     def ignorerole(self) -> Optional[discord.Role]:
-        if not self._guild is None:
+        if self._guild is not None:
             return discord.utils.get(self._guild.roles, name="quotient-tag-ignore")

@@ -55,7 +55,7 @@ class CreateAlert(discord.ui.Button):
         record = await Alert.create(author_id=interaction.user.id, message=self.view.formatted)
         await self.ctx.bot.reminders.create_timer(record.created_at + timedelta(days=10), "alert", alert_id=record.id)
 
-        await self.ctx.success("Created a new alert with `ID: {}`".format(record.id))
+        await self.ctx.success(f"Created a new alert with `ID: {record.id}`")
 
 
 class QuoAlerts(Cog):

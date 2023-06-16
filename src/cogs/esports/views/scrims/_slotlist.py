@@ -76,7 +76,7 @@ class ManageSlotlist(discord.ui.Select):
             await show_slotlist_formatter(self.ctx, self.record, self.view.message)
 
         elif selected == "edit":
-            if self.record.slotlist_message_id == None:
+            if self.record.slotlist_message_id is None:
                 return await self.ctx.error("Slotlist not found. Please repost.", 5)
 
             msg = None

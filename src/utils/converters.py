@@ -178,11 +178,8 @@ class QuoUser(commands.Converter):
         """
         argument = argument.strip()
         if ctx.guild:
-            try:
+            with contextlib.suppress(commands.MemberNotFound):
                 return await QuoMember().convert(ctx, argument)
-
-            except commands.MemberNotFound:
-                pass
 
         try:
             return await commands.UserConverter().convert(ctx, argument)

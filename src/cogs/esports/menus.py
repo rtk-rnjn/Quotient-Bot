@@ -323,7 +323,7 @@ class IDPMenu(menus.Menu):
         return await self.ctx.send(
             embed=discord.Embed(
                 color=discord.Color(config.COLOR),
-                title=f"🛠️ ID/Pass Formatter",
+                title="🛠️ ID/Pass Formatter",
                 description=description,
             )
         )
@@ -341,18 +341,17 @@ class IDPMenu(menus.Menu):
 
         title = await inputs.string_input(self.ctx, self.check, delete_after=True)
         if len(title) > 256:
-            return await self.ctx.error(f"Title cannot exceed 256 characters.", delete_after=3)
+            return await self.ctx.error(
+                "Title cannot exceed 256 characters.", delete_after=3
+            )
 
         await inputs.safe_delete(msg)
-        if title.lower() == "none":
-            self.embed.title = None
-        else:
-            self.embed.title = title
+        self.embed.title = None if title.lower() == "none" else title
         await self.refresh()
 
     @menus.button("🆔")
     async def set_id(self, payload):
-        msg = await self.cembed(f"What is the ID of custom room?")
+        msg = await self.cembed("What is the ID of custom room?")
 
         _id = await inputs.string_input(self.ctx, self.check, delete_after=True)
 
@@ -363,7 +362,7 @@ class IDPMenu(menus.Menu):
 
     @menus.button("🇵")
     async def set_pass(self, payload):
-        msg = await self.cembed(f"What is the password for room?")
+        msg = await self.cembed("What is the password for room?")
 
         _pass = await inputs.string_input(self.ctx, self.check, delete_after=True)
 
@@ -374,7 +373,7 @@ class IDPMenu(menus.Menu):
 
     @menus.button("🗺️")
     async def set_map(self, payload):
-        msg = await self.cembed(f"What is the name of map?")
+        msg = await self.cembed("What is the name of map?")
 
         _map = await inputs.string_input(self.ctx, self.check, delete_after=True)
 
@@ -384,7 +383,7 @@ class IDPMenu(menus.Menu):
 
     @menus.button("🕰️")
     async def set_starttime(self, payload):
-        msg = await self.cembed(f"What is the match start time?")
+        msg = await self.cembed("What is the match start time?")
 
         start_time = await inputs.string_input(self.ctx, self.check, delete_after=True)
 
@@ -394,7 +393,7 @@ class IDPMenu(menus.Menu):
 
     @menus.button("🖼️")
     async def set_thumbnail(self, payload):
-        msg = await self.cembed(f"Enter the Image URL you want to set as thumbnail.")
+        msg = await self.cembed("Enter the Image URL you want to set as thumbnail.")
         image = await inputs.string_input(self.ctx, self.check, delete_after=True)
 
         await inputs.safe_delete(msg)
@@ -405,18 +404,13 @@ class IDPMenu(menus.Menu):
             try:
                 image_formats = ("image/png", "image/jpeg", "image/jpg", "image/gif")
                 res = await self.bot.session.get(image)
-                if res.headers["content-type"] in image_formats:
-                    check = True
-
-                else:
-                    check = False
-
+                check = res.headers["content-type"] in image_formats
             except aiohttp.client_exceptions.InvalidURL:
-                return await self.ctx.error(f"This is not a valid Image URL", delete_after=3)
+                return await self.ctx.error("This is not a valid Image URL", delete_after=3)
 
             if not check:
                 return await self.ctx.error(
-                    f"The URL didn't contain a valid Image format.", delete_after=3
+                    "The URL didn't contain a valid Image format.", delete_after=3
                 )
 
             self.embed.set_thumbnail(url=image)
@@ -646,7 +640,7 @@ class ConfigEditMenu(menus.Menu):
         return await self.ctx.send(
             embed=discord.Embed(
                 color=discord.Color(config.COLOR),
-                title=f"🛠️ Scrims Manager",
+                title="🛠️ Scrims Manager",
                 description=description,
             )
         )

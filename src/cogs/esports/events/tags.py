@@ -27,7 +27,7 @@ class TagEvents(Cog):
 
         channel_id = message.channel.id
 
-        if not channel_id in self.bot.cache.tagcheck:
+        if channel_id not in self.bot.cache.tagcheck:
             return
 
         tagcheck = await TagCheck.get_or_none(channel_id=channel_id)
@@ -48,7 +48,7 @@ class TagEvents(Cog):
                 _react = False
                 await message.reply("Kindly mention your real teammate.", delete_after=5)
 
-            if not len(message.mentions) >= tagcheck.required_mentions:
+            if len(message.mentions) < tagcheck.required_mentions:
                 _react = False
                 await message.reply(
                     f"You need to mention `{utils.plural(tagcheck.required_mentions):teammate|teammates}`.",
@@ -74,7 +74,7 @@ class TagEvents(Cog):
         if not message.guild or message.author.bot:
             return
 
-        if not message.channel.id in self.bot.cache.eztagchannels:
+        if message.channel.id not in self.bot.cache.eztagchannels:
             return
 
         channel_id = message.channel.id

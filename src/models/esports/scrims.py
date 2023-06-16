@@ -144,10 +144,7 @@ class Scrim(BaseDbModel):
         if self.opened_at is None:
             return False
 
-        if self.closed_at is not None:
-            return self.closed_at < self.opened_at
-
-        return True
+        return self.closed_at < self.opened_at if self.closed_at is not None else True
 
     @property
     def closed(self):
@@ -182,11 +179,10 @@ class Scrim(BaseDbModel):
     async def cleaned_slots(self) -> List["AssignedSlot"]:
         slots = await self.assigned_slots.order_by("num")
 
-        _list = []
-        for _ in {slot.num for slot in slots}:
-            _list.append(next(i for i in slots if i.num == _))
-
-        return _list
+        return [
+            next(i for i in slots if i.num == _)
+            for _ in {slot.num for slot in slots}
+        ]
 
     async def add_tick(self, msg: discord.Message):
         with suppress(discord.HTTPException):
@@ -195,9 +191,11 @@ class Scrim(BaseDbModel):
 
     @staticmethod
     def default_slotlist_format():
-        return discord.Embed(color=0x00FFB3, title=f"<<name>> Slotlist", description="```\n<<slots>>\n```").set_footer(
-            text=f"Registration took: <<time_taken>>"
-        )
+        return discord.Embed(
+            color=0x00FFB3,
+            title="<<name>> Slotlist",
+            description="```\n<<slots>>\n```",
+        ).set_footer(text="Registration took: <<time_taken>>")
 
     async def create_slotlist(self):
 
@@ -220,7 +218,7 @@ class Scrim(BaseDbModel):
             text = text.replace(*_)
 
         embed = discord.Embed.from_dict(leval(text))
-        if embed.color == None:
+        if embed.color is None:
             embed.color = 0x2F3136
 
         embed.description = embed.description.replace("<<slots>>", desc)
@@ -533,7 +531,13 @@ class Scrim(BaseDbModel):
             msg_ids = (i.message_id for i in registered)
 
             check = lambda x: all(
-                (not x.pinned, not x.reactions, not x.embeds, not x.author == self.bot.user, not x.id in msg_ids)
+                (
+                    not x.pinned,
+                    not x.reactions,
+                    not x.embeds,
+                    x.author != self.bot.user,
+                    x.id not in msg_ids,
+                )
             )
             self.bot.loop.create_task(wait_and_purge(registration_channel, check=check, wait_for=60))
 

@@ -35,7 +35,10 @@ class EsportsBaseView(discord.ui.View):
     async def on_timeout(self) -> None:
         if hasattr(self, "message"):
             for b in self.children:
-                if isinstance(b, discord.ui.Button) and not b.style == discord.ButtonStyle.link:
+                if (
+                    isinstance(b, discord.ui.Button)
+                    and b.style != discord.ButtonStyle.link
+                ):
                     b.style, b.disabled = discord.ButtonStyle.grey, True
 
             with suppress(discord.HTTPException):
@@ -49,7 +52,7 @@ class EsportsBaseView(discord.ui.View):
         embed = discord.Embed(color=self.bot.color, description=desc, title=self.title)
         if image:
             embed.set_image(url=image)
-        embed.set_footer(text=f"Reply with 'cancel' to stop this process.")
+        embed.set_footer(text="Reply with 'cancel' to stop this process.")
 
         return await self.ctx.send(embed=embed, embed_perms=True)
 

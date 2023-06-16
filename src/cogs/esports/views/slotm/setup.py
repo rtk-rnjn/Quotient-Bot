@@ -24,17 +24,17 @@ __all__ = ("ScrimsSlotManagerSetup",)
 class ScrimsSlotmSelector(discord.ui.Select):
     def __init__(self, records: List[ScrimsSlotManager]):
 
-        _o = []
-        for record in records:
-            _o.append(
-                discord.SelectOption(
-                    label=getattr(record.main_channel, "name", "channel-not-found"),  # type: ignore
-                    value=record.id,
-                    description=truncate_string(f"Scrims: {', '.join(str(_) for _ in record.scrim_ids)}", 100),
-                    emoji=emote.TextChannel,
-                )
+        _o = [
+            discord.SelectOption(
+                label=getattr(record.main_channel, "name", "channel-not-found"),  # type: ignore
+                value=record.id,
+                description=truncate_string(
+                    f"Scrims: {', '.join(str(_) for _ in record.scrim_ids)}", 100
+                ),
+                emoji=emote.TextChannel,
             )
-
+            for record in records
+        ]
         super().__init__(placeholder="Select a slot-manager channel ...", options=_o)
 
     async def callback(self, interaction: discord.Interaction):
@@ -58,7 +58,7 @@ class ScrimsSlotManagerSetup(EsportsBaseView):
 
         _sm = "\n".join(_to_show) if _to_show else "```Click add-channel to set cancel-claim.```"
 
-        _e = discord.Embed(color=0x00FFB3, title=f"Scrims Slot-Manager Setup")
+        _e = discord.Embed(color=0x00FFB3, title="Scrims Slot-Manager Setup")
 
         _e.description = (
             "Slot-Manager is a way to ease-up scrims slot management process. With Quotient's slotm users can - "

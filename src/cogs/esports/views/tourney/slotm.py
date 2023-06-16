@@ -68,7 +68,7 @@ class TourneySlotManager(discord.ui.View):
 
     @staticmethod
     def initial_embed(tourney: Tourney) -> discord.Embed:
-        embed = discord.Embed(
+        return discord.Embed(
             color=config.COLOR,
             description=(
                 f"**[Tourney Slot Manager]({config.SERVER_LINK})** ─ {tourney}\n\n"
@@ -78,7 +78,6 @@ class TourneySlotManager(discord.ui.View):
                 "*Note that slot cancel is irreversible.*"
             ),
         )
-        return embed
 
     @discord.ui.button(style=discord.ButtonStyle.danger, custom_id="tourney-cancel-slot", label="Cancel My Slot")
     async def cancel_slot(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -116,8 +115,7 @@ class TourneySlotManager(discord.ui.View):
                 self.bot.loop.create_task(update_confirmed_message(self.tourney, slot.confirm_jump_url))
 
             if len(_slots) == 1:
-                member = interaction.guild.get_member(slot.leader_id)
-                if member:
+                if member := interaction.guild.get_member(slot.leader_id):
                     self.bot.loop.create_task(member.remove_roles(self.tourney.role))
 
             await TMSlot.filter(pk=slot.id).delete()

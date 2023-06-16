@@ -34,22 +34,20 @@ def tourney_work_role(tourney: Tourney, _type: EsportsRole):
 def before_registrations(message: discord.Message, role: discord.Role) -> bool:
     assert message.guild is not None
 
-    me = message.guild.me
-    channel = message.channel
-
     if not role:
         return False
 
-    if not all(
+    me = message.guild.me
+    channel = message.channel
+
+    return all(
         (
             me.guild_permissions.manage_roles,
             role < message.guild.me.top_role,
-            channel.permissions_for(me).add_reactions,  # type: ignore
-            channel.permissions_for(me).use_external_emojis,  # type: ignore
+            channel.permissions_for(me).add_reactions,
+            channel.permissions_for(me).use_external_emojis,
         )
-    ):
-        return False
-    return True
+    )
 
 
 async def check_tourney_requirements(bot, message: discord.Message, tourney: Tourney) -> bool:
@@ -65,7 +63,7 @@ async def check_tourney_requirements(bot, message: discord.Message, tourney: Tou
         _bool = False
         bot.dispatch("tourney_registration_deny", message, RegDeny.botmention, tourney)
 
-    elif not len(message.mentions) >= tourney.required_mentions:
+    elif len(message.mentions) < tourney.required_mentions:
         _bool = False
         bot.dispatch("tourney_registration_deny", message, RegDeny.nomention, tourney)
 
@@ -86,7 +84,7 @@ async def t_ask_embed(ctx, value, description: str):
         title=f"🛠️ Tournament Manager ({value}/5)",
         description=description,
     )
-    embed.set_footer(text=f'Reply with "cancel" to stop the process.')
+    embed.set_footer(text='Reply with "cancel" to stop the process.')
     await ctx.send(embed=embed, embed_perms=True)
 
 
@@ -101,7 +99,7 @@ async def update_confirmed_message(tourney: Tourney, link: str):
         if message:
             e = message.embeds[0]
 
-            e.description = "~~" + e.description.strip() + "~~"
+            e.description = f"~~{e.description.strip()}~~"
             e.title = "Cancelled Slot"
             e.color = discord.Color.red()
 

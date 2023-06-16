@@ -22,7 +22,7 @@ class SlotManagerEvents(Cog):
         if not scrim:
             return
 
-        if not scrim.match_time == timer.expires:
+        if scrim.match_time != timer.expires:
             return
 
         record = await ScrimsSlotManager.get_or_none(guild_id=scrim.guild_id, scrim_ids__contains=scrim.id)

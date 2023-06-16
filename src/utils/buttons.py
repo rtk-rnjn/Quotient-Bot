@@ -76,17 +76,17 @@ class BaseSelector(discord.ui.View):
 class ChannelSelector(discord.ui.Select):
     def __init__(self, placeholder: str, channels: List[Union[discord.TextChannel, discord.VoiceChannel]]):
 
-        _options = []
-        for channel in channels:
-            _options.append(
-                discord.SelectOption(
-                    label=channel.name,
-                    value=channel.id,
-                    description=f"{channel.name} ({channel.id})",
-                    emoji=TextChannel if isinstance(channel, discord.TextChannel) else VoiceChannel,
-                )
+        _options = [
+            discord.SelectOption(
+                label=channel.name,
+                value=channel.id,
+                description=f"{channel.name} ({channel.id})",
+                emoji=TextChannel
+                if isinstance(channel, discord.TextChannel)
+                else VoiceChannel,
             )
-
+            for channel in channels
+        ]
         super().__init__(placeholder=placeholder, options=_options)
 
     async def callback(self, interaction: discord.Interaction):

@@ -61,7 +61,9 @@ class Errors(Cog):
             elif isinstance(err, commands.PartialEmojiConversionFailure):
                 await ctx.error(f"The argument `{err.argument}` did not match the partial emoji format.")
             elif isinstance(err, commands.BadInviteArgument):
-                await ctx.error(f"The invite that matched that argument was not valid or is expired.")
+                await ctx.error(
+                    "The invite that matched that argument was not valid or is expired."
+                )
             elif isinstance(err, commands.BadBoolArgument):
                 await ctx.error(f"The argument `{err.argument}` was not a valid True/False value.")
             elif isinstance(err, commands.BadColourArgument):
@@ -74,7 +76,9 @@ class Errors(Cog):
             return await ctx.error(f"You need `{err.missing_role}` role to use this command.")
 
         elif isinstance(err, commands.MaxConcurrencyReached):
-            return await ctx.error(f"This command is already running in this server. You have wait for it to finish.")
+            return await ctx.error(
+                "This command is already running in this server. You have wait for it to finish."
+            )
 
         elif isinstance(err, commands.CommandOnCooldown):
             if await ctx.bot.is_owner(ctx.author):
